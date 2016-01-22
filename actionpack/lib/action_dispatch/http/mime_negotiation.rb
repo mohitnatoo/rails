@@ -17,10 +17,10 @@ module ActionDispatch
       def content_mime_type
         fetch_header("action_dispatch.request.content_type") do |k|
           v = if get_header('CONTENT_TYPE') =~ /^([^,\;]*)/
-            Mime::Type.lookup($1.strip.downcase)
-          else
-            nil
-          end
+                Mime::Type.lookup($1.strip.downcase)
+              else
+                nil
+              end
           set_header k, v
         end
       end
@@ -39,10 +39,10 @@ module ActionDispatch
           header = get_header('HTTP_ACCEPT').to_s.strip
 
           v = if header.empty?
-            [content_mime_type]
-          else
-            Mime::Type.parse(header)
-          end
+                [content_mime_type]
+              else
+                Mime::Type.parse(header)
+              end
           set_header k, v
         end
       end
@@ -60,28 +60,24 @@ module ActionDispatch
       def formats
         fetch_header("action_dispatch.request.formats") do |k|
           params_readable = begin
-                              parameters[:format]
-                            rescue ActionController::BadRequest
-                              false
-                            end
+            parameters[:format]
+          rescue ActionController::BadRequest
+            false
+          end
 
           v = if params_readable
-            Array(Mime[parameters[:format]])
-          elsif use_accept_header && valid_accept_header
-            accepts
-          elsif extension_format = format_from_path_extension
-            [extension_format]
-          elsif xhr?
-            [Mime[:js]]
-          else
-            [Mime[:html]]
-          end
+                Array(Mime[parameters[:format]])
+              elsif use_accept_header && valid_accept_header
+                accepts
+              elsif extension_format = format_from_path_extension
+                [extension_format]
+              elsif xhr?
+                [Mime[:js]]
+              else
+                [Mime[:html]]
+              end
           set_header k, v
         end
-      end
-
-      def variant
-        @variant ||= send(:variant=, parameters[:variant].try(:to_sym))
       end
 
       # Sets the \variant for template.
@@ -99,7 +95,11 @@ module ActionDispatch
       end
 
       def variant
-        @variant ||= ActiveSupport::ArrayInquirer.new
+        @variant ||= if parameters.key? :variant
+                       send(:variant=, parameters[:variant].try(:to_sym))
+                     else
+                       ActiveSupport::ArrayInquirer.new
+                     end
       end
 
       # Sets the \format by string extension, which can be used to force custom formats
@@ -135,8 +135,8 @@ module ActionDispatch
       def formats=(extensions)
         parameters[:format] = extensions.first.to_s
         set_header "action_dispatch.request.formats", extensions.collect { |extension|
-          Mime::Type.lookup_by_extension(extension)
-        }
+                                                      Mime::Type.lookup_by_extension(extension)
+                                                    }
       end
 
       # Receives an array of mimes and return the first user sent mime that
@@ -160,7 +160,7 @@ module ActionDispatch
 
       def valid_accept_header
         (xhr? && (accept.present? || content_mime_type)) ||
-          (accept.present? && accept !~ BROWSER_LIKE_ACCEPTS)
+            (accept.present? && accept !~ BROWSER_LIKE_ACCEPTS)
       end
 
       def use_accept_header

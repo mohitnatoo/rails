@@ -240,7 +240,7 @@ module ActionDispatch
             if args.size > 0
               # take format into account (variant is tied to formats)
               if path_params.include?(:format)
-                path_params_size = path_params.size - 2
+                path_params_size = path_params.size - 2 # Format and variant account for two parts
               else
                 path_params_size = path_params.size
               end
