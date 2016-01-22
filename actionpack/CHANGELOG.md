@@ -1,3 +1,14 @@
+*   Allow variants to be set through the URL
+
+    request.variant can be set from url. For example, accessing
+    http://example.com/posts.html+partial set `request.variant = [:partial]`
+    automatically. `:variant` is tied to `:format` like `(.:format(+:variant))`.
+
+    *Hong ChulJu*, *Mohit Natoo*
+
+*   Drop request class from RouteSet constructor.
+
+    If you would like to use a custom request class, please subclass and implemet
 *   Response etags to always be weak: Prefixes 'W/' to value returned by
    `ActionDispatch::Http::Cache::Response#etag=`, such that etags set in
    `fresh_when` and `stale?` are weak.
